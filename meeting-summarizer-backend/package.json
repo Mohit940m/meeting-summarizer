@@ -1,0 +1,28 @@
+{
+  "name": "meeting-summarizer-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js" 
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "axios": "^1.11.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.1",
+    "express": "^5.1.0",
+    "express-oauth2-jwt-bearer": "^1.6.1",
+    "mongoose": "^8.17.1",
+    "nodemailer": "^7.0.5",
+    "sib-api-v3-sdk": "^8.5.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}
