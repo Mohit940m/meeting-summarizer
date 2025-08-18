@@ -1,5 +1,5 @@
 
-const auth = require("express-oauth2-jwt-bearer");
+const { auth } = require("express-oauth2-jwt-bearer");
 
 
 // ✅ Middleware to validate JWTs from Auth0

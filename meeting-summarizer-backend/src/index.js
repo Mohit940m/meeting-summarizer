@@ -1,15 +1,14 @@
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
-const dotenv = require("dotenv");
+const dotenv = require('dotenv');
 
 // const connectDB = require("./config/db");
+dotenv.config();
+
 const summaryRoutes = require("./routes/summary.js");
 const emailRoutes = require("./routes/email.js");
 const userRoutes = require("./routes/user.js");
-
-
-dotenv.config();
 const app = express();
 
 app.use(cors());
@@ -18,7 +17,9 @@ app.use(express.json());
 // Connect DB
 mongoose
   .connect(process.env.MONGO_URI)
-  .then(() => console.log("✅ MongoDB connected"))
+  .then(() => {
+    app.listen(5000, () => console.log("Server running on http://localhost:5000"));
+  })
   .catch((err) => console.error("MongoDB error:", err.message));
 
 // Protected routes
