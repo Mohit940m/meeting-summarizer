@@ -27,3 +27,10 @@ mongoose
 app.use("/api/summary", summaryRoutes);
 app.use("/api/email", emailRoutes);
 app.use("/api/user", userRoutes);
+
+app.use(
+  cors({
+    origin: "*",
+    optionsSuccessStatus: 200, // Allow all origins (for development purposes; adjust for production)
+  })
+);

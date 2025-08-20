@@ -10,11 +10,12 @@ const router = express.Router();
  */
 router.get("/profile", checkJwt, (req, res) => {
   try {
-    // `req.auth` contains decoded token data
+    // express-oauth2-jwt-bearer attaches token data on req.auth.payload
+    const payload = req.auth?.payload || {};
     const userInfo = {
-      userId: req.auth.sub,       // Auth0 user id (like auth0|123456)
-      email: req.auth?.claims?.email || null,
-      roles: req.auth?.claims?.["https://yourdomain.com/roles"] || [], // if roles added
+      userId: payload.sub || null, // Auth0 user id (e.g., auth0|123456)
+      email: payload.email || null,
+      roles: payload["https://yourdomain.com/roles"] || [], // if custom roles claim added
     };
 
     res.json({ success: true, user: userInfo });
