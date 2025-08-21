@@ -22,7 +22,7 @@ router.post("/send", async (req, res) => {
   try {
     // Construct email object
     const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
-    sendSmtpEmail.sender = { name: "Meeting Summarizer", email: "noreply@yourdomain.com" };
+    sendSmtpEmail.sender = { name: "Meeting Summarizer", email: "sahachowdhurmohit@gmail.com" };
     sendSmtpEmail.to = recipients.split(",").map((email) => ({ email: email.trim() }));
     sendSmtpEmail.subject = "AI-Generated Meeting Summary";
     sendSmtpEmail.htmlContent = `<html><body><pre>${summaryText}</pre></body></html>`;

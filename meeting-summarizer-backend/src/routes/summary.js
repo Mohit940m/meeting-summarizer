@@ -8,7 +8,7 @@ const router = express.Router();
 
 // Generate summary using Gemini
 router.post("/generate", checkJwt, async (req, res) => {
-  const { transcriptText, customPrompt, userId } = req.body;
+  const { transcriptText, customPrompt } = req.body;
 
   if (!transcriptText || !customPrompt) {
     return res.status(400).json({ error: "Transcript and prompt are required" });
@@ -37,7 +37,8 @@ router.post("/generate", checkJwt, async (req, res) => {
 
     const summary = response.data?.candidates?.[0]?.content?.parts?.[0]?.text || "No summary generated";
 
-    // Optionally save in MongoDB
+    // Save in MongoDB linked to logged-in user
+    const userId = req.user?.id;
     if (userId) {
       const newTranscript = new Transcript({
         userId,

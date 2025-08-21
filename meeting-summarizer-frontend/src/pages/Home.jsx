@@ -1,10 +1,7 @@
 import { useState } from "react";
-import { useAuth0 } from "@auth0/auth0-react";
 import API from "../services/api";
 
 export default function Home() {
-  const { isAuthenticated, getAccessTokenSilently } = useAuth0();
-
   const [transcriptText, setTranscriptText] = useState("");
   const [customPrompt, setCustomPrompt] = useState("");
   const [summary, setSummary] = useState("");
@@ -24,22 +21,12 @@ export default function Home() {
     if (!transcriptText || !customPrompt) return;
     setLoading(true);
     try {
-      let token;
-      if (isAuthenticated) {
-        token = await getAccessTokenSilently();
-      }
-
-      const res = await API.post(
-        "/summary/generate",
-        { transcriptText, customPrompt },
-        token
-          ? { headers: { Authorization: `Bearer ${token}` } }
-          : undefined
-      );
+      const res = await API.post("/api/summary/generate", { transcriptText, customPrompt });
       setSummary(res.data.summary || "");
     } catch (err) {
       console.error(err);
-      alert("Failed to generate summary");
+      if (err?.response?.status === 401) alert("Please login to generate a summary");
+      else alert("Failed to generate summary");
     } finally {
       setLoading(false);
     }
@@ -49,18 +36,7 @@ export default function Home() {
     if (!emailRecipients || !summary) return;
     setEmailSending(true);
     try {
-      let token;
-      if (isAuthenticated) {
-        token = await getAccessTokenSilently();
-      }
-
-      await API.post(
-        "/email/send",
-        { recipients: emailRecipients, summaryText: summary },
-        token
-          ? { headers: { Authorization: `Bearer ${token}` } }
-          : undefined
-      );
+      await API.post("/api/email/send", { recipients: emailRecipients, summaryText: summary });
       alert("Email sent!");
     } catch (err) {
       console.error(err);
