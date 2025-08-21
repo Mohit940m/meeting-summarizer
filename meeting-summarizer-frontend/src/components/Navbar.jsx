@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
 
 export default function Navbar() {
-  const { isAuthenticated, loginWithRedirect, logout, user } = useAuth0();
+  const { isAuthenticated, logout, user } = useAuth0();
 
   return (
     <nav className="bg-white border-b border-gray-200">
@@ -27,12 +27,12 @@ export default function Navbar() {
               </button>
             </>
           ) : (
-            <button
-              onClick={() => loginWithRedirect()}
+            <Link
+              to="/login"
               className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-500"
             >
               Login
-            </button>
+            </Link>
           )}
         </div>
       </div>
