@@ -2,7 +2,7 @@
 const express = require("express");
 const axios = require("axios");
 const Transcript = require("../models/Transcript");
-const checkJwt = require("../middleware/checkJwt");
+const checkJwt = require("../middleware/auth");
 
 const router = express.Router();
 
