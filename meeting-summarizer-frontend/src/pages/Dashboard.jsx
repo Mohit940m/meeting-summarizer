@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import API from "../services/api";
+import { toast } from "react-toastify";
 
 export default function Dashboard() {
   const [profile, setProfile] = useState(null);
@@ -9,8 +10,11 @@ export default function Dashboard() {
       try {
         const res = await API.get("api/user/profile");
         setProfile(res.data.user);
+        toast.success("Profile loaded");
       } catch (e) {
         console.error(e);
+        const msg = e?.response?.data?.error || e?.response?.data?.message || "Failed to load profile";
+        toast.error(msg);
       }
     };
     run();

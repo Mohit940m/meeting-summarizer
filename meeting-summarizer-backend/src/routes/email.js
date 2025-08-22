@@ -1,5 +1,6 @@
 const express = require("express");
 const SibApiV3Sdk = require("sib-api-v3-sdk");
+const axios = require("axios");
 
 
 const router = express.Router();
@@ -19,22 +20,62 @@ router.post("/send", async (req, res) => {
     return res.status(400).json({ error: "Recipients and summary text required" });
   }
 
+  // try {
+  //   // Construct email object
+  //   const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
+  //   sendSmtpEmail.sender = { name: "Meeting Summarizer", email: "sahachowdhurmohit@gmail.com" };
+  //   sendSmtpEmail.to = recipients.split(",").map((email) => ({ email: email.trim() }));
+  //   sendSmtpEmail.subject = "AI-Generated Meeting Summary";
+  //   sendSmtpEmail.htmlContent = `<html><body><pre>${summaryText}</pre></body></html>`;
+
+  //   // Send email via Brevo
+  //   const data = await apiInstance.sendTransacEmail(sendSmtpEmail);
+  //   console.log("Email sent successfully:", data);
+
+  //   res.json({ success: true, message: "Email sent successfully!", data });
+  // } catch (error) {
+  //   console.error("Brevo API error:", error.message);
+  //   res.status(500).json({ success: false, error: "Failed to send email" });
+  // }
+
+  // uising basic email sending by Brevo
   try {
-    // Construct email object
-    const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
-    sendSmtpEmail.sender = { name: "Meeting Summarizer", email: "sahachowdhurmohit@gmail.com" };
-    sendSmtpEmail.to = recipients.split(",").map((email) => ({ email: email.trim() }));
-    sendSmtpEmail.subject = "AI-Generated Meeting Summary";
-    sendSmtpEmail.htmlContent = `<html><body><pre>${summaryText}</pre></body></html>`;
+  const body = {
+    sender: {
+      name: "Meeting Summarizer",
+      email: "sahachowdhurymohit@gmail.com"
+    },
+    to: recipients.split(",").map((email) => ({ email: email.trim() })),
+    subject: "AI-Generated Meeting Summary",
+    htmlContent: `<html><body><pre>${summaryText}</pre></body></html>`,
+    replyTo: {
+      email: "sahachowdhurymohit@gmail.com"
+    }
+  };
 
-    // Send email via Brevo
-    const data = await apiInstance.sendTransacEmail(sendSmtpEmail);
+  const config = {
+    headers: {
+      "accept": "application/json",
+      "api-key": process.env.BREVO_API_KEY,
+      "Content-Type": "application/json"
+    }
+  };
 
-    res.json({ success: true, message: "Email sent successfully!", data });
-  } catch (error) {
-    console.error("Brevo API error:", error.message);
-    res.status(500).json({ success: false, error: "Failed to send email" });
+  const response = await axios.post(
+    "https://api.brevo.com/v3/smtp/email",
+    body,
+    config
+  );
+
+  console.log("✅ Brevo response:", response.data);
+
+  if (response.data.messageId) {
+    res.json({ success: true, message: "Email sent successfully!", data: response.data });
   }
+} catch (error) {
+  console.error("❌ Brevo API error:", error.response?.data || error.message);
+  res.status(500).json({ success: false, error: "Failed to send email", details: error.response?.data });
+}
 });
 
 module.exports = router;

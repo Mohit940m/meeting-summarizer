@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import API from "../services/api";
+import { toast } from "react-toastify";
 
 const AuthContext = createContext(null);
 
@@ -26,25 +27,42 @@ export function AuthProvider({ children }) {
   };
 
   const register = async ({ email, username, password, confirmPassword }) => {
-    const res = await API.post("/api/user/register", {
-      email,
-      username,
-      password,
-      confirmPassword,
-    });
-    const { token: t, user: u } = res.data;
-    saveAuth(t, u);
-    return u;
+    try {
+      const res = await API.post("/api/user/register", {
+        email,
+        username,
+        password,
+        confirmPassword,
+      });
+      const { token: t, user: u } = res.data;
+      saveAuth(t, u);
+      toast.success("Registration successful");
+      return u;
+    } catch (err) {
+      const msg = err?.response?.data?.error || err?.response?.data?.message || "Registration failed";
+      toast.error(msg);
+      throw err;
+    }
   };
 
   const login = async ({ email, password }) => {
-    const res = await API.post("/api/user/login", { email, password });
-    const { token: t, user: u } = res.data;
-    saveAuth(t, u);
-    return u;
+    try {
+      const res = await API.post("/api/user/login", { email, password });
+      const { token: t, user: u } = res.data;
+      saveAuth(t, u);
+      toast.success("Signed in successfully");
+      return u;
+    } catch (err) {
+      const msg = err?.response?.data?.error || err?.response?.data?.message || "Sign in failed";
+      toast.error(msg);
+      throw err;
+    }
   };
 
-  const logout = () => clearAuth();
+  const logout = () => {
+    clearAuth();
+    toast.info("Logged out");
+  };
 
   // optional: keep profile in sync
   useEffect(() => {
@@ -57,6 +75,7 @@ export function AuthProvider({ children }) {
       } catch (e) {
         // token invalid/expired
         clearAuth();
+        toast.error("Session expired. Please log in again.");
       }
     };
     syncProfile();

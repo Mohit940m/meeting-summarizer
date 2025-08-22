@@ -1,5 +1,6 @@
 import { useState } from "react";
 import API from "../services/api";
+import { toast } from "react-toastify";
 
 export default function Home() {
   const [transcriptText, setTranscriptText] = useState("");
@@ -25,8 +26,8 @@ export default function Home() {
       setSummary(res.data.summary || "");
     } catch (err) {
       console.error(err);
-      if (err?.response?.status === 401) alert("Please login to generate a summary");
-      else alert("Failed to generate summary");
+      if (err?.response?.status === 401) toast.error("Please login to generate a summary");
+      else toast.error(err?.response?.data?.error || "Failed to generate summary");
     } finally {
       setLoading(false);
     }
@@ -37,10 +38,10 @@ export default function Home() {
     setEmailSending(true);
     try {
       await API.post("/api/email/send", { recipients: emailRecipients, summaryText: summary });
-      alert("Email sent!");
+      toast.success("Email sent!");
     } catch (err) {
       console.error(err);
-      alert("Failed to send email");
+      toast.error(err?.response?.data?.error || "Failed to send email");
     } finally {
       setEmailSending(false);
     }
